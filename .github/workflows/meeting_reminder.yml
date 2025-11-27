@@ -1,0 +1,23 @@
+name: Meeting Reminder
+
+on:
+  schedule:
+    - cron: '55 13 * * 4' 
+  workflow_dispatch:
+
+jobs:
+  send_discord_message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord Webhook Message
+        uses: tsickert/discord-webhook@v5
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          content: |
+            📢 **會議提醒！**
+            @everyone
+            今晚 10:00 是每週例會時間，請準時上線。
+          # 您可以設定機器人顯示的名稱
+          username: 皮卡丘小幫手
+          # 設定訊息是否可以被 @everyone 或 @here 標記 (建議設為 true 才能成功 tag)
+          allowed-mentions: '{"parse": ["everyone"]}'
