@@ -13,9 +13,9 @@ jobs:
         run: |
           MONTH=$(date -u +%-m)
           if [ "$MONTH" -ge 3 ] && [ "$MONTH" -le 10 ]; then
-            echo "uk=15:00 BST (UTC+1)" >> $GITHUB_OUTPUT
+            echo "uk=14:00 BST (UTC+1)" >> $GITHUB_OUTPUT
           else
-            echo "uk=14:00 GMT (UTC+0)" >> $GITHUB_OUTPUT
+            echo "uk=13:00 GMT (UTC+0)" >> $GITHUB_OUTPUT
           fi
 
       - name: Send Discord Webhook Message
