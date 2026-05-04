@@ -1,7 +1,7 @@
 name: Meeting Reminder
 on:
   schedule:
-    - cron: '45 12 * * 5'   # 12:45 UTC = 20:45 Taiwan time, fires ~15 min early
+    - cron: '45 12 * * 5'
   workflow_dispatch:
 
 jobs:
@@ -10,13 +10,14 @@ jobs:
     steps:
       - name: Send Weekly Meeting Reminder to Discord
         shell: python
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           import urllib.request
           import json
           import os
           from datetime import datetime, timezone
 
-          # Determine UK time — BST (UTC+1) runs March to October
           month = datetime.now(timezone.utc).month
           if 3 <= month <= 10:
               uk_time = "22:00 BST (UTC+1)"
@@ -39,8 +40,10 @@ jobs:
               "allowed_mentions": {"parse": ["everyone"]}
           }).encode("utf-8")
 
+          webhook_url = os.environ["DISCORD_WEBHOOK_URL"]  # ✅ read from env
+
           req = urllib.request.Request(
-              "${{ secrets.DISCORD_WEBHOOK_URL }}",
+              webhook_url,
               data=payload,
               headers={"Content-Type": "application/json"},
               method="POST"
