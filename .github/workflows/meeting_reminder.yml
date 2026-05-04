@@ -1,45 +1,48 @@
 name: Meeting Reminder
 on:
   schedule:
-    - cron: '45 12 * * 5'  # 12:45 UTC = 20:45 TWN — fires ~15 min early
+    - cron: '45 12 * * 5'   # 12:45 UTC = 20:45 Taiwan time, fires ~15 min early
   workflow_dispatch:
 
 jobs:
   send_discord_message:
     runs-on: ubuntu-latest
     steps:
-      - name: Calculate UK time and send Discord message
-        shell: bash
+      - name: Send Weekly Meeting Reminder to Discord
+        shell: python
         run: |
-          # UK time: BST (UTC+1) Mar–Oct, GMT (UTC+0) Nov–Feb
-          MONTH=$(date -u +%-m)
-          if [ "$MONTH" -ge 3 ] && [ "$MONTH" -le 10 ]; then
-            UK_TIME="22:00 BST (UTC+1)"
-          else
-            UK_TIME="21:00 GMT (UTC+0)"
-          fi
+          import urllib.request
+          import json
+          import os
+          from datetime import datetime, timezone
 
-          curl -s -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"content\": \"📢 **Weekly Meeting Reminder!**\n@everyone\nTonight's weekly meeting starts at:\n🇹🇼 Taiwan: 21:00 (TST, UTC+8)\n🇯🇵 Japan: 21:00 (JST, UTC+9) — wait, 22:00!\n\n Sorry — see below.\",
-              \"allowed_mentions\": {\"parse\": [\"everyone\"]},
-              \"username\": \"Pikachu Assistant\"
-            }"
-        env:
-          UK_TIME: ${{ env.UK_TIME }}
+          # Determine UK time — BST (UTC+1) runs March to October
+          month = datetime.now(timezone.utc).month
+          if 3 <= month <= 10:
+              uk_time = "22:00 BST (UTC+1)"
+          else:
+              uk_time = "21:00 GMT (UTC+0)"
 
-      - name: Send Discord Webhook Message
-        uses: tsickert/discord-webhook@v7.0.0
-        with:
-          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          username: Pikachu Assistant
-          allowed-mentions: '{"parse": ["everyone"]}'
-          content: |
-            📢 **Weekly Meeting Reminder!**
-            @everyone
-            Tonight's weekly meeting starts at:
-            🇹🇼 Taiwan: 21:00 TST (UTC+8)
-            🇯🇵 Japan: 22:00 JST (UTC+9)
-            🇬🇧 UK: ${{ env.UK_TIME }}
-            Please be on time!
+          message = (
+              "📢 **Weekly Meeting Reminder!**\n"
+              "@everyone\n"
+              "Tonight's weekly meeting starts at:\n"
+              "🇹🇼 Taiwan: 21:00 TST (UTC+8)\n"
+              "🇯🇵 Japan: 22:00 JST (UTC+9)\n"
+              f"🇬🇧 UK: {uk_time}\n"
+              "Please be on time! 🙏"
+          )
+
+          payload = json.dumps({
+              "username": "Pikachu Assistant",
+              "content": message,
+              "allowed_mentions": {"parse": ["everyone"]}
+          }).encode("utf-8")
+
+          req = urllib.request.Request(
+              "${{ secrets.DISCORD_WEBHOOK_URL }}",
+              data=payload,
+              headers={"Content-Type": "application/json"},
+              method="POST"
+          )
+          urllib.request.urlopen(req)
