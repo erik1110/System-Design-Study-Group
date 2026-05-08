@@ -8,8 +8,8 @@ A weekly study group dedicated to exploring system design concepts, distributed 
 
 | Date | Topic | Presenter | Content |
 |------|-------|-----------|-----------|
-| 2026-05-08 | Design A Chat System | Erik | |
-| 2026-05-08 |  | — ||
+| 2026-05-08 | Design A Chat System | Erik | Polling, Websocket and Data models|
+| 2026-05-08 | Rate Limter | Susan ||
 
 ---
 
