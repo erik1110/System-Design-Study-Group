@@ -6,10 +6,10 @@ A weekly study group dedicated to exploring system design concepts, distributed 
 
 ## 📅 Schedule
 
-| Date | Topic | Presenter |
-|------|-------|-----------|
-| 2026-05-08 | Design A Chat System | Erik |
-| 2026-05-08 |  | — |
+| Date | Topic | Presenter | Content |
+|------|-------|-----------|-----------|
+| 2026-05-08 | Design A Chat System | Erik | |
+| 2026-05-08 |  | — ||
 
 ---
 
