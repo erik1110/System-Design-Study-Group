@@ -1,7 +1,7 @@
 name: Meeting Reminder
 on:
   schedule:
-    - cron: '45 12 * * 5'   # 12:45 UTC = 20:45 Taiwan time
+    - cron: '40 13 * * 5'
   workflow_dispatch:
 
 jobs:
