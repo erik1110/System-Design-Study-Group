@@ -28,7 +28,7 @@ jobs:
             📢 **Weekly Meeting Reminder!**
             @everyone
             Tonight's weekly meeting starts at:
+            🇬🇧 UK: ${{ steps.uktime.outputs.uk }}
             🇹🇼 Taiwan: 21:00 TST (UTC+8)
             🇯🇵 Japan: 22:00 JST (UTC+9)
-            🇬🇧 UK: ${{ steps.uktime.outputs.uk }}
             Please be on time! 🙏
