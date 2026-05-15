@@ -1,7 +1,7 @@
 name: Meeting Reminder
 on:
   schedule:
-    - cron: '40 13 * * 5'
+    - cron: '40 10 * * 5'
   workflow_dispatch:
 
 jobs:
