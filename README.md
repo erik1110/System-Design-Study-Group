@@ -10,6 +10,7 @@ A weekly study group dedicated to exploring system design concepts, distributed 
 |------|-------|-----------|-----------|
 | 2026-05-08 | Design A Chat System | Erik | Polling, Websocket and Data models|
 | 2026-05-08 | Rate Limter | Susan |Algorithms for rate limiting, High-level architecture(Redis)|
+| 2026-05-15 | Design A Unique ID Generator in Distributed Systems| Negi | How to generate unique IDs in distributed systems|
 
 ---
 
