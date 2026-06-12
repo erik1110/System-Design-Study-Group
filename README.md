@@ -6,14 +6,15 @@ A weekly study group dedicated to exploring system design concepts, distributed 
 
 ## 📅 Schedule
 
-| Date | Topic | Presenter | Content |
-|------|-------|-----------|-----------|
-| 2026-05-08 | Design A Chat System | Erik | Polling, Websocket and Data models|
-| 2026-05-08 | Ch4: Rate Limter | Susan |Algorithms for rate limiting, High-level architecture(Redis)|
-| 2026-05-15 | Design A Unique ID Generator in Distributed Systems| Negi | How to generate unique IDs in distributed systems|
-| 2026-05-15 | Ch4: Rate Limter | Susan |Step3:Design deep dive, Step4:Deep dive|
-| 2026-05-23 | Design A URL Shortener | Negi | 301 redirect, 302 redirect, Back of the envelope estimation, API Endpoints |
-| 2026-05-29 | Design A Chat System | Erik | Message flows, Online presence |
+| Date | Topic | Presenter | Content | Link |
+|------|-------|-----------|-----------| -----------|
+| 2026-05-08 | Design A Chat System | Erik | Polling, Websocket and Data models| |
+| 2026-05-08 | Ch4: Rate Limter | Susan |Algorithms for rate limiting, High-level architecture(Redis)| |
+| 2026-05-15 | Design A Unique ID Generator in Distributed Systems| Negi | How to generate unique IDs in distributed systems| |
+| 2026-05-15 | Ch4: Rate Limter | Susan |Step3:Design deep dive, Step4:Deep dive| |
+| 2026-05-23 | Design A URL Shortener | Negi | 301 redirect, 302 redirect, Back of the envelope estimation, API Endpoints | |
+| 2026-05-29 | Design A Chat System | Erik | Message flows, Online presence | |
+| 2026-06-12 | Design A Search Autocomplete System | Erik | Message flows, Online presence |[Ch13_Search_Autocomplete_System_EN.pptx]()|
 ---
 
 ## 📖 Reference Materials
