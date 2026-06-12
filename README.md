@@ -14,7 +14,7 @@ A weekly study group dedicated to exploring system design concepts, distributed 
 | 2026-05-15 | Ch4: Rate Limter | Susan |Step3:Design deep dive, Step4:Deep dive| |
 | 2026-05-23 | Design A URL Shortener | Negi | 301 redirect, 302 redirect, Back of the envelope estimation, API Endpoints | |
 | 2026-05-29 | Design A Chat System | Erik | Message flows, Online presence | |
-| 2026-06-12 | Design A Search Autocomplete System | Erik | Message flows, Online presence |[Ch13_Search_Autocomplete_System_EN.pdf](https://github.com/erik1110/System-Design-Study-Group/blob/main/pdf/Ch13_Search_Autocomplete_System_EN.pdf)|
+| 2026-06-12 | Design A Search Autocomplete System | Erik |  |[Ch13_Search_Autocomplete_System_EN.pdf](https://github.com/erik1110/System-Design-Study-Group/blob/main/pdf/Ch13_Search_Autocomplete_System_EN.pdf)|
 ---
 
 ## 📖 Reference Materials
