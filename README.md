@@ -16,6 +16,7 @@ A weekly study group dedicated to exploring system design concepts, distributed 
 | 2026-05-29 | Design A Chat System | Erik | Message flows, Online presence | |
 | 2026-07-03 | Design A Search Autocomplete System | Erik |  |[Ch13_Search_Autocomplete_System_EN.pdf](https://github.com/erik1110/System-Design-Study-Group/blob/main/pdf/Ch13_Search_Autocomplete_System_EN.pdf)|
 | 2026-07-03 | Ch1 Scale from zero to millions of users| Susan | Single server setup,...,cache| |
+| 2026-07-17 | Design A URL Shortener | Negi | URL shortening, Hash + collision resolution, Data model, Hash function, Base 62 conversion |
 ---
 
 ## 📖 Reference Materials
