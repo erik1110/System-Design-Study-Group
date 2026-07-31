@@ -18,7 +18,7 @@ A weekly study group dedicated to exploring system design concepts, distributed 
 | 2026-07-03 | Ch1 Scale from zero to millions of users| Susan | Single server setup,...,cache| |
 | 2026-07-17 | Design A URL Shortener | Negi | URL shortening, Hash + collision resolution, Data model, Hash function, Base 62 conversion |[CH8_URL_Shortener.pdf](https://github.com/erik1110/System-Design-Study-Group/blob/main/pdf/CH8_Scalable_URL_Shortener_Architecture.pdf)
 |2026-07-23| Design Google Drive | Erik | | [ch16_Design Google Drive](https://github.com/erik1110/System-Design-Study-Group/blob/main/pdf/ch16_Design%20Google%20Drive.pdf)
-|2026-07-31 | Ch1 Scale from zero to millions of users| Susan | Review| |
+|2026-07-31 | Ch1 Scale from zero to millions of users| Susan | Review|index.html |
 
 ---
 
@@ -27,7 +27,9 @@ A weekly study group dedicated to exploring system design concepts, distributed 
 - **Online Resources**
   - [System Design Interview – An Insider's Guide: Volume 2](https://www.amazon.co.uk/System-Design-Interview-Insiders-Guide/dp/1736049119/ref=asc_df_1736049119?mcid=855a6ff974e23f5b84d31e3d7c3b1e2a&th=1&psc=1&tag=googshopuk-21&linkCode=df0&hvadid=697235261482&hvpos=&hvnetw=g&hvrand=8509828248986110709&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9222618&hvtargid=pla-1645933631661&psc=1&hvocijid=8509828248986110709-1736049119-&hvexpln=0&gad_source=1)
 
+  - System Design Quick Guide: https://youtu.be/Y93BGebBwEE?si=dzqX8wknY075Yc_D
 ---
+
 
 ## 🗓️ Meeting Info
 
