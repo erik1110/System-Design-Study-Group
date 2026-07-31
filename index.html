@@ -2,137 +2,903 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>System Design Study Group</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第一章筆記｜從零到百萬使用者規模</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #ffffff;
-    --fg: #1a1a1a;
-    --muted: #666;
-    --border: #e3e3e3;
-    --accent: #2d6cdf;
-    --card: #f7f8fa;
+  :root{
+    --navy-deep:#081d30;
+    --navy:#0c2b47;
+    --panel:#0f3358;
+    --panel-2:#123a63;
+    --grid-line: rgba(146,203,232,0.09);
+    --cyan:#5fd4e0;
+    --cyan-dim: rgba(95,212,224,0.35);
+    --amber:#f2a93b;
+    --text-main:#eaf6fb;
+    --text-dim:#8fb2cc;
+    --line: rgba(234,246,251,0.16);
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #16171a;
-      --fg: #e8e8e8;
-      --muted: #9a9a9a;
-      --border: #2e3035;
-      --accent: #6ea8ff;
-      --card: #1e2024;
-    }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--navy-deep);
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 28px 28px;
+    color:var(--text-main);
+    font-family:'Noto Sans TC', sans-serif;
+    line-height:1.7;
   }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    padding: 2rem 1rem 4rem;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC",
-                 "PingFang TC", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.65;
-    background: var(--bg);
-    color: var(--fg);
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  a{color:var(--cyan);}
+
+  /* ---------- Title block ---------- */
+  .titleblock{
+    max-width:1100px;
+    margin:0 auto;
+    padding:64px 28px 40px;
+    border-bottom:1px solid var(--line);
   }
-  main { max-width: 900px; margin: 0 auto; }
-  h1 { font-size: 2rem; margin: 0 0 .25rem; }
-  .tagline { color: var(--muted); margin: 0 0 2.5rem; }
-  h2 {
-    font-size: 1.15rem;
-    margin: 2.5rem 0 1rem;
-    padding-bottom: .5rem;
-    border-bottom: 1px solid var(--border);
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    letter-spacing:.25em;
+    font-size:12px;
+    color:var(--cyan);
+    text-transform:uppercase;
   }
-  .table-wrap { overflow-x: auto; }
-  table { border-collapse: collapse; width: 100%; font-size: .93rem; }
-  th, td {
-    text-align: left;
-    padding: .7rem .8rem;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
+  h1.doctitle{
+    font-size:clamp(28px,5vw,52px);
+    margin:10px 0 6px;
+    font-weight:900;
+    letter-spacing:-0.01em;
   }
-  th { font-weight: 600; color: var(--muted); white-space: nowrap; }
-  td:first-child { white-space: nowrap; color: var(--muted); }
-  a { color: var(--accent); }
-  ul { padding-left: 1.2rem; }
-  li { margin: .4rem 0; }
-  .info {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1rem 1.25rem;
+  .subtitle{color:var(--text-dim); font-size:17px; max-width:640px;}
+  .stampgrid{
+    margin-top:32px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    border:1px solid var(--line);
   }
-  .info p { margin: .35rem 0; }
-  footer {
-    margin-top: 3rem;
-    color: var(--muted);
-    font-size: .875rem;
-    text-align: center;
+  .stampgrid div{
+    padding:10px 14px;
+    border-right:1px solid var(--line);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--text-dim);
+  }
+  .stampgrid div:last-child{border-right:none;}
+  .stampgrid b{display:block; color:var(--text-main); font-size:13px; margin-top:3px;}
+  @media(max-width:700px){ .stampgrid{grid-template-columns:repeat(2,1fr);} }
+
+  /* ---------- Nav ---------- */
+  .toc{
+    max-width:1100px; margin:0 auto; padding:18px 28px;
+    display:flex; flex-wrap:wrap; gap:6px 18px;
+    border-bottom:1px solid var(--line);
+    position:sticky; top:0; background:rgba(8,29,48,0.92); backdrop-filter:blur(6px);
+    z-index:50;
+  }
+  .toc a{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px; color:var(--text-dim); text-decoration:none;
+    padding:5px 0; border-bottom:1px solid transparent;
+  }
+  .toc a:hover{color:var(--cyan); border-color:var(--cyan-dim);}
+
+  main{max-width:1100px; margin:0 auto; padding:20px 28px 100px;}
+
+  /* ---------- Sheet card ---------- */
+  .sheet{
+    margin-top:56px;
+    border:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(15,51,88,0.35), rgba(15,51,88,0.08));
+    padding:30px clamp(16px,4vw,40px) 36px;
+    position:relative;
+  }
+  .sheetno{
+    position:absolute; top:-13px; left:24px;
+    background:var(--navy-deep);
+    padding:0 10px;
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--amber);
+    font-size:12px;
+    letter-spacing:.15em;
+  }
+  h2.sec{
+    font-size:clamp(20px,3vw,28px);
+    margin:6px 0 4px;
+    font-weight:700;
+  }
+  .sec-sub{color:var(--text-dim); font-size:14px; margin-bottom:22px;}
+  p{margin:0 0 12px; color:#d7e8f2;}
+  ul.notes{margin:0 0 14px; padding-left:20px; color:#d7e8f2;}
+  ul.notes li{margin-bottom:7px;}
+  .tag{
+    display:inline-block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--cyan);
+    border:1px solid var(--cyan-dim);
+    padding:2px 8px;
+    border-radius:2px;
+    margin:2px 6px 2px 0;
+  }
+  .warn{color:var(--amber);}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+
+  table{border-collapse:collapse; width:100%; margin:10px 0 18px; font-size:14px;}
+  th,td{border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top;}
+  th{font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--cyan); letter-spacing:.05em; background:rgba(95,212,224,0.06);}
+
+  /* ---------- Interactive diagram ---------- */
+  .lab{
+    border:1px solid var(--line);
+    background:var(--navy);
+  }
+  .lab-top{
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:14px 20px 0;
+  }
+  .lab-top .mono{font-size:11px; color:var(--text-dim); letter-spacing:.1em;}
+  .diagram-wrap{padding:6px 10px 0;}
+  svg#stageSvg{width:100%; height:auto; display:block;}
+  .stage-el{ transition: opacity .45s ease; }
+  .stage-arrow{ transition: opacity .45s ease; }
+
+  .controls{
+    padding:18px 24px 24px;
+    border-top:1px solid var(--line);
+  }
+  .slider-row{display:flex; align-items:center; gap:14px;}
+  input[type=range]{
+    flex:1;
+    -webkit-appearance:none;
+    height:3px;
+    background:var(--line);
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:16px; height:16px; border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 0 4px rgba(95,212,224,0.18);
+    cursor:pointer;
+  }
+  .navbtn{
+    font-family:'IBM Plex Mono',monospace;
+    background:none; border:1px solid var(--line); color:var(--text-main);
+    padding:6px 12px; cursor:pointer; font-size:13px;
+  }
+  .navbtn:hover{border-color:var(--cyan); color:var(--cyan);}
+  .stage-desc{
+    margin-top:20px;
+    display:grid; grid-template-columns:1fr 1.4fr; gap:24px;
+  }
+  @media(max-width:760px){ .stage-desc{grid-template-columns:1fr;} }
+  .stage-title-row{display:flex; align-items:center; gap:10px;}
+  .stage-num{
+    font-family:'IBM Plex Mono',monospace; color:var(--navy-deep);
+    background:var(--cyan);
+    width:30px; height:30px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:600; flex-shrink:0;
+  }
+  #stageTitle{font-size:19px; font-weight:700; margin:0;}
+  #stageBullets{padding-left:18px; margin:10px 0 0; color:#d7e8f2; font-size:14.5px;}
+  #stageBullets li{margin-bottom:6px;}
+
+  /* ---------- simple CSS diagrams ---------- */
+  .flow{
+    display:flex; flex-wrap:wrap; align-items:center; gap:10px;
+    padding:24px 6px; justify-content:center;
+  }
+  .box{
+    border:1px solid var(--cyan-dim);
+    background:rgba(95,212,224,0.05);
+    padding:12px 16px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    text-align:center;
+    min-width:100px;
+    color:var(--text-main);
+  }
+  .box.amber{border-color:rgba(242,169,59,0.55); background:rgba(242,169,59,0.06); color:var(--amber);}
+  .arrow{color:var(--text-dim); font-size:18px;}
+  .stack{display:flex; flex-direction:column; gap:6px; align-items:center;}
+
+  footer{
+    text-align:center; padding:40px 20px 60px;
+    font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-dim);
+    border-top:1px solid var(--line);
+  }
+  /* ---------- case study accordions ---------- */
+  .case{
+    border:1px solid var(--line);
+    background:rgba(15,51,88,0.18);
+    margin-bottom:14px;
+  }
+  .case summary{
+    cursor:pointer;
+    list-style:none;
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    justify-content:space-between;
+  }
+  .case summary::-webkit-details-marker{display:none;}
+  .case-head{display:flex; align-items:center; gap:14px;}
+  .case-mark{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--navy-deep);
+    background:var(--cyan);
+    padding:3px 8px;
+    flex-shrink:0;
+  }
+  .case-name{font-weight:700; font-size:16px;}
+  .case-hint{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-dim);}
+  .case-plus{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:18px; color:var(--cyan);
+    transition:transform .25s ease;
+    flex-shrink:0;
+  }
+  .case[open] .case-plus{ transform:rotate(45deg); }
+  .case-body{
+    padding:2px 20px 22px;
+    border-top:1px solid var(--line);
+  }
+  .case-body p{font-size:14px;}
+  .case-body ul.notes{font-size:14px;}
+  .case-tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--amber);
+    border:1px solid rgba(242,169,59,0.4);
+    padding:1px 7px;
+    margin-right:6px;
+  }
+  .checklist{list-style:none; padding:0; margin:0; display:grid; grid-template-columns:1fr 1fr; gap:10px 24px;}
+  @media(max-width:700px){.checklist{grid-template-columns:1fr;}}
+  .checklist li{
+    font-size:14.5px; color:#d7e8f2; padding-left:26px; position:relative;
+  }
+  .checklist li::before{
+    content:"□"; position:absolute; left:0; top:0; color:var(--cyan); font-size:16px;
   }
 </style>
 </head>
 <body>
+
+<div class="titleblock">
+  <div class="eyebrow">System Design Interview — An Insider's Guide</div>
+  <h1 class="doctitle">第一章：從零到百萬使用者規模</h1>
+  <p class="subtitle">Alex Xu 著．中文閱讀筆記 — 用一張逐步擴充的藍圖，記錄系統如何從單一伺服器，演化成能撐住百萬使用者的架構。</p>
+  <div class="stampgrid mono">
+    <div>原文作者<b>Alex Xu</b></div>
+    <div>圖表<b>本頁重繪 / 互動式</b></div>
+    <div>章節<b>CH.01 / 16</b></div>
+    <div>筆記語言<b>繁體中文</b></div>
+  </div>
+</div>
+
+<nav class="toc">
+  <a href="#lab">01 互動藍圖</a>
+  <a href="#s-single">02 單一伺服器</a>
+  <a href="#s-db">03 資料庫選型</a>
+  <a href="#s-scale">04 垂直 vs 水平擴展</a>
+  <a href="#s-lb">05 負載平衡器</a>
+  <a href="#s-repl">06 資料庫複製</a>
+  <a href="#s-cache">07 快取</a>
+  <a href="#s-cdn">08 CDN</a>
+  <a href="#s-stateless">09 無狀態網頁層</a>
+  <a href="#s-dc">10 多資料中心</a>
+  <a href="#s-mq">11 訊息佇列</a>
+  <a href="#s-log">12 日誌監控自動化</a>
+  <a href="#s-shard">13 資料庫分片</a>
+  <a href="#s-cases">14 業界真實案例</a>
+  <a href="#s-sum">15 總結</a>
+</nav>
+
 <main>
-  <h1>📚 System Design Study Group</h1>
-  <p class="tagline">A weekly study group dedicated to exploring system design concepts, distributed systems, and software architecture best practices.</p>
 
-  <h2>📅 Schedule</h2>
-  <div class="table-wrap">
+  <!-- ================= INTERACTIVE LAB ================= -->
+  <section class="sheet" id="lab">
+    <div class="sheetno">SHEET 01 — 系統演化互動藍圖</div>
+    <h2 class="sec">拖動時間軸，看架構怎麼一步步長出來</h2>
+    <p class="sec-sub">這張圖濃縮了本章前六個階段：從一台什麼都裝的主機，到負載平衡、資料庫複製、快取／CDN，再到無狀態網頁層。每多拖一格，畫面上就多蓋一塊積木。</p>
+
+    <div class="lab">
+      <div class="lab-top">
+        <span class="mono">FIG. 1-LAB — CUMULATIVE ARCHITECTURE</span>
+        <span class="mono" id="stageCounter">STAGE 1 / 6</span>
+      </div>
+      <div class="diagram-wrap">
+        <svg id="stageSvg" viewBox="0 0 1100 480" xmlns="http://www.w3.org/2000/svg">
+          <!-- grid dots -->
+          <defs>
+            <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="#5fd4e0"></path>
+            </marker>
+          </defs>
+
+          <!-- USER (always) -->
+          <g class="stage-el" data-min="1">
+            <circle cx="55" cy="240" r="18" fill="none" stroke="#8fb2cc" stroke-width="1.5"/>
+            <line x1="55" y1="258" x2="55" y2="290" stroke="#8fb2cc" stroke-width="1.5"/>
+            <line x1="38" y1="270" x2="72" y2="270" stroke="#8fb2cc" stroke-width="1.5"/>
+            <text x="55" y="315" fill="#8fb2cc" font-family="IBM Plex Mono" font-size="11" text-anchor="middle">使用者</text>
+          </g>
+
+          <!-- DNS -->
+          <g class="stage-el" data-min="1">
+            <rect x="150" y="215" width="90" height="50" fill="none" stroke="#5fd4e0" stroke-width="1.3"/>
+            <text x="195" y="245" fill="#eaf6fb" font-family="IBM Plex Mono" font-size="12" text-anchor="middle">DNS</text>
+          </g>
+          <line class="stage-arrow" data-min="1" x1="90" y1="240" x2="145" y2="240" stroke="#5fd4e0" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+          <!-- Stage1 monolith -->
+          <g class="stage-el" data-min="1" data-max="1">
+            <rect x="470" y="180" width="170" height="120" fill="rgba(95,212,224,0.06)" stroke="#5fd4e0" stroke-width="1.3"/>
+            <text x="555" y="230" fill="#eaf6fb" font-family="IBM Plex Mono" font-size="12" text-anchor="middle">單一伺服器</text>
+            <text x="555" y="250" fill="#8fb2cc" font-family="IBM Plex Mono" font-size="10.5" text-anchor="middle">Web + DB + Cache</text>
+            <text x="555" y="270" fill="#8fb2cc" font-family="IBM Plex Mono" font-size="10.5" text-anchor="middle">全部塞在同一台機器</text>
+          </g>
+          <line class="stage-arrow" data-min="1" data-max="1" x1="240" y1="240" x2="465" y2="240" stroke="#5fd4e0" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+          <!-- LB (stage3+) -->
+          <g class="stage-el" data-min="3">
+            <rect x="300" y="215" width="110" height="50" fill="rgba(242,169,59,0.07)" stroke="#f2a93b" stroke-width="1.3"/>
+            <text x="355" y="240" fill="#f2a93b" font-family="IBM Plex Mono" font-size="11.5" text-anchor="middle">負載平衡器</text>
+            <text x="355" y="255" fill="#f2a93b" font-family="IBM Plex Mono" font-size="9.5" text-anchor="middle">Load Balancer</text>
+          </g>
+          <line class="stage-arrow" data-min="3" x1="240" y1="240" x2="295" y2="240" stroke="#5fd4e0" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+          <!-- DNS -> webserver direct (stage2 only, before LB) -->
+          <line class="stage-arrow" data-min="2" data-max="2" x1="240" y1="240" x2="465" y2="215" stroke="#5fd4e0" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+          <!-- Web server 1 (stage2+) -->
+          <g class="stage-el" data-min="2">
+            <rect x="470" y="150" width="150" height="65" fill="rgba(95,212,224,0.06)" stroke="#5fd4e0" stroke-width="1.3"/>
+            <text x="545" y="178" fill="#eaf6fb" font-family="IBM Plex Mono" font-size="11.5" text-anchor="middle">Web 伺服器 1</text>
+            <text x="545" y="195" fill="#8fb2cc" font-family="IBM Plex Mono" font-size="9.5" text-anchor="middle">stateless-web</text>
+          </g>
+          <line class="stage-arrow" data-min="3" x1="410" y1="230" x2="465" y2="182" stroke="#f2a93b" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+          <!-- Web server 2 (stage3+) -->
+          <g class="stage-el" data-min="3">
+            <rect x="470" y="290" width="150" height="65" fill="rgba(95,212,224,0.06)" stroke="#5fd4e0" stroke-width="1.3"/>
+            <text x="545" y="318" fill="#eaf6fb" font-family="IBM Plex Mono" font-size="11.5" text-anchor="middle">Web 伺服器 2</text>
+            <text x="545" y="335" fill="#8fb2cc" font-family="IBM Plex Mono" font-size="9.5" text-anchor="middle">stateless-web</text>
+          </g>
+          <line class="stage-arrow" data-min="3" x1="410" y1="250" x2="465" y2="315" stroke="#f2a93b" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+          <!-- generic DB (stage2-3) -->
+          <g class="stage-el" data-min="2" data-max="3">
+            <rect x="860" y="180" width="160" height="70" fill="rgba(95,212,224,0.06)" stroke="#5fd4e0" stroke-width="1.3"/>
+            <text x="940" y="212" fill="#eaf6fb" font-family="IBM Plex Mono" font-size="12" text-anchor="middle">資料庫</text>
+            <text x="940" y="230" fill="#8fb2cc" font-family="IBM Plex Mono" font-size="9.5" text-anchor="middle">單一節點</text>
+          </g>
+
+          <!-- Master DB (stage4+) -->
+          <g class="stage-el" data-min="4">
+            <rect x="860" y="130" width="160" height="60" fill="rgba(95,212,224,0.07)" stroke="#5fd4e0" stroke-width="1.3"/>
+            <text x="940" y="155" fill="#eaf6fb" font-family="IBM Plex Mono" font-size="11.5" text-anchor="middle">主資料庫</text>
+            <text x="940" y="172" fill="#8fb2cc" font-family="IBM Plex Mono" font-size="9" text-anchor="middle">Master · 只寫入</text>
+          </g>
+          <!-- Slave DBs -->
+          <g class="stage-el" data-min="4">
+            <rect x="860" y="205" width="160" height="45" fill="rgba(95,212,224,0.05)" stroke="#5fd4e0" stroke-width="1.1"/>
+            <text x="940" y="232" fill="#8fb2cc" font-family="IBM Plex Mono" font-size="10.5" text-anchor="middle">從資料庫 1 · 只讀</text>
+          </g>
+          <g class="stage-el" data-min="4">
+            <rect x="860" y="258" width="160" height="45" fill="rgba(95,212,224,0.05)" stroke="#5fd4e0" stroke-width="1.1"/>
+            <text x="940" y="285" fill="#8fb2cc" font-family="IBM Plex Mono" font-size="10.5" text-anchor="middle">從資料庫 2 · 只讀</text>
+          </g>
+          <line class="stage-arrow" data-min="4" x1="940" y1="190" x2="940" y2="204" stroke="#5fd4e0" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+          <line class="stage-arrow" data-min="4" x1="940" y1="190" x2="940" y2="257" stroke="#5fd4e0" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+
+          <!-- web -> db direct arrows (stage2-4, before cache) -->
+          <line class="stage-arrow" data-min="2" data-max="4" x1="620" y1="182" x2="855" y2="210" stroke="#8fb2cc" stroke-width="1.1" marker-end="url(#arrow)"/>
+          <line class="stage-arrow" data-min="3" data-max="4" x1="620" y1="315" x2="855" y2="230" stroke="#8fb2cc" stroke-width="1.1" marker-end="url(#arrow)"/>
+
+          <!-- Cache tier (stage5+) -->
+          <g class="stage-el" data-min="5">
+            <rect x="700" y="200" width="120" height="70" fill="rgba(95,212,224,0.09)" stroke="#5fd4e0" stroke-width="1.4"/>
+            <text x="760" y="230" fill="#eaf6fb" font-family="IBM Plex Mono" font-size="12" text-anchor="middle">快取</text>
+            <text x="760" y="248" fill="#8fb2cc" font-family="IBM Plex Mono" font-size="9" text-anchor="middle">read-through</text>
+          </g>
+          <line class="stage-arrow" data-min="5" x1="620" y1="182" x2="698" y2="220" stroke="#8fb2cc" stroke-width="1.1" marker-end="url(#arrow)"/>
+          <line class="stage-arrow" data-min="5" x1="620" y1="315" x2="698" y2="250" stroke="#8fb2cc" stroke-width="1.1" marker-end="url(#arrow)"/>
+          <line class="stage-arrow" data-min="5" x1="820" y1="235" x2="855" y2="220" stroke="#8fb2cc" stroke-width="1.1" marker-end="url(#arrow)"/>
+
+          <!-- CDN (stage5+) -->
+          <g class="stage-el" data-min="5">
+            <rect x="470" y="40" width="180" height="55" fill="rgba(242,169,59,0.07)" stroke="#f2a93b" stroke-width="1.3"/>
+            <text x="560" y="63" fill="#f2a93b" font-family="IBM Plex Mono" font-size="11.5" text-anchor="middle">CDN</text>
+            <text x="560" y="80" fill="#f2a93b" font-family="IBM Plex Mono" font-size="9" text-anchor="middle">快取靜態資源 (JS/CSS/圖片)</text>
+          </g>
+          <path class="stage-arrow" data-min="5" d="M60,222 C60,120 300,68 465,68" fill="none" stroke="#f2a93b" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+
+          <!-- Session Store (stage6+) -->
+          <g class="stage-el" data-min="6">
+            <rect x="700" y="330" width="180" height="65" fill="rgba(95,212,224,0.07)" stroke="#5fd4e0" stroke-width="1.3"/>
+            <text x="790" y="358" fill="#eaf6fb" font-family="IBM Plex Mono" font-size="11.5" text-anchor="middle">共享 Session 儲存</text>
+            <text x="790" y="375" fill="#8fb2cc" font-family="IBM Plex Mono" font-size="9" text-anchor="middle">NoSQL / Redis</text>
+          </g>
+          <line class="stage-arrow" data-min="6" x1="620" y1="200" x2="698" y2="345" stroke="#8fb2cc" stroke-dasharray="2,3" stroke-width="1.1" marker-end="url(#arrow)"/>
+          <line class="stage-arrow" data-min="6" x1="620" y1="330" x2="698" y2="365" stroke="#8fb2cc" stroke-dasharray="2,3" stroke-width="1.1" marker-end="url(#arrow)"/>
+
+        </svg>
+      </div>
+
+      <div class="controls">
+        <div class="slider-row">
+          <button class="navbtn" id="prevBtn">← 上一步</button>
+          <input type="range" id="stageSlider" min="1" max="6" step="1" value="1">
+          <button class="navbtn" id="nextBtn">下一步 →</button>
+        </div>
+        <div class="stage-desc">
+          <div>
+            <div class="stage-title-row">
+              <div class="stage-num" id="stageNumBadge">1</div>
+              <h3 id="stageTitle">單一伺服器</h3>
+            </div>
+            <div id="stageTags"></div>
+          </div>
+          <ul id="stageBullets"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 1. Single server ================= -->
+  <section class="sheet" id="s-single">
+    <div class="sheetno">SHEET 02</div>
+    <h2 class="sec">起點：單一伺服器</h2>
+    <p class="sec-sub">千里之行，始於單一伺服器。Web App、資料庫、快取通通擠在同一台機器上。</p>
+    <p><b>請求流程：</b></p>
+    <ul class="notes">
+      <li>使用者透過網域名稱（例如 <span class="tag">api.mysite.com</span>）造訪網站，DNS 通常是跟第三方付費購買的服務，並非自己架設。</li>
+      <li>DNS 回傳一組 IP 位址給瀏覽器或 App。</li>
+      <li>瀏覽器 / App 直接對這個 IP 發出 HTTP 請求。</li>
+      <li>伺服器回傳 HTML 頁面或 JSON 給前端渲染。</li>
+    </ul>
+    <p><b>流量的兩個來源：</b></p>
+    <div class="grid2">
+      <div class="box" style="text-align:left; min-width:auto;">
+        <b class="mono" style="color:#5fd4e0;">網頁應用程式</b><br>
+        伺服器端語言（Java、Python…）處理商業邏輯與儲存；前端用 HTML／JavaScript 負責畫面呈現。
+      </div>
+      <div class="box" style="text-align:left; min-width:auto;">
+        <b class="mono" style="color:#5fd4e0;">行動應用程式</b><br>
+        Mobile App 與伺服器之間用 HTTP 溝通，API 回應多半採用 JSON 格式，簡單又通用。
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 2. Database ================= -->
+  <section class="sheet" id="s-db">
+    <div class="sheetno">SHEET 03</div>
+    <h2 class="sec">使用者變多之後：資料庫要分家</h2>
+    <p class="sec-sub">一台伺服器不夠用時，先把「網頁／行動流量」跟「資料庫」拆成兩台機器，讓兩層可以各自獨立擴展。接著要決定：用關聯式還是非關聯式資料庫？</p>
     <table>
-      <thead>
-        <tr>
-          <th>Date</th><th>Topic</th><th>Presenter</th><th>Content</th><th>Link</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>2026-05-08</td><td>Design A Chat System</td><td>Erik</td>
-          <td>Polling, Websocket and Data models</td><td></td>
-        </tr>
-        <tr>
-          <td>2026-05-08</td><td>Ch4: Rate Limiter</td><td>Susan</td>
-          <td>Algorithms for rate limiting, High-level architecture (Redis)</td><td></td>
-        </tr>
-        <tr>
-          <td>2026-05-15</td><td>Design A Unique ID Generator in Distributed Systems</td><td>Negi</td>
-          <td>How to generate unique IDs in distributed systems</td><td></td>
-        </tr>
-        <tr>
-          <td>2026-05-15</td><td>Ch4: Rate Limiter</td><td>Susan</td>
-          <td>Step 3: Design deep dive, Step 4: Deep dive</td><td></td>
-        </tr>
-        <tr>
-          <td>2026-05-23</td><td>Design A URL Shortener</td><td>Negi</td>
-          <td>301 redirect, 302 redirect, Back of the envelope estimation, API Endpoints</td><td></td>
-        </tr>
-        <tr>
-          <td>2026-05-29</td><td>Design A Chat System</td><td>Erik</td>
-          <td>Message flows, Online presence</td><td></td>
-        </tr>
-        <tr>
-          <td>2026-06-12</td><td>Design A Search Autocomplete System</td><td>Erik</td>
-          <td>Message flows, Online presence</td>
-          <td><a href="pdf/Ch13_Search_Autocomplete_System_EN.pdf">Ch13 PDF</a></td>
-        </tr>
-      </tbody>
+      <tr><th>比較項目</th><th>關聯式資料庫（RDBMS / SQL）</th><th>非關聯式資料庫（NoSQL）</th></tr>
+      <tr><td>代表產品</td><td>MySQL、Oracle、PostgreSQL</td><td>CouchDB、Neo4j、Cassandra、HBase、DynamoDB</td></tr>
+      <tr><td>資料型態</td><td>表格與列（rows），支援 JOIN</td><td>Key-Value、Graph、Column、Document 四大類，通常不支援 JOIN</td></tr>
+      <tr><td>適合情境</td><td>大多數應用的預設選擇，40 年來驗證穩定</td><td>需要超低延遲、資料無結構、只需序列化 (JSON/XML/YAML)、資料量極大時考慮</td></tr>
     </table>
-  </div>
+    <p class="warn">筆記重點：先選 SQL，除非你的情境明確落在 NoSQL 更適合的四種狀況之一。</p>
+  </section>
 
-  <h2>📖 Reference Materials</h2>
-  <ul>
-    <li><a href="https://www.amazon.co.uk/System-Design-Interview-Insiders-Guide/dp/1736049119/">System Design Interview – An Insider's Guide: Volume 2</a></li>
-  </ul>
+  <!-- ================= 3. vertical vs horizontal ================= -->
+  <section class="sheet" id="s-scale">
+    <div class="sheetno">SHEET 04</div>
+    <h2 class="sec">垂直擴展 vs 水平擴展</h2>
+    <div class="grid2">
+      <div>
+        <p><b class="mono" style="color:#f2a93b;">垂直擴展（Scale Up）</b> — 幫同一台機器加 CPU / RAM。</p>
+        <ul class="notes">
+          <li>流量還小時很好用，設定簡單。</li>
+          <li class="warn">硬體有極限，不可能無限加大。</li>
+          <li class="warn">沒有容錯／備援：這台掛了，網站就整個掛了。</li>
+        </ul>
+      </div>
+      <div>
+        <p><b class="mono" style="color:#5fd4e0;">水平擴展（Scale Out）</b> — 把資源池裡的伺服器一台一台加進去。</p>
+        <ul class="notes">
+          <li>大型應用的長期解法，理論上沒有上限。</li>
+          <li>需要搭配負載平衡器才能發揮效果。</li>
+          <li>是後面所有擴展手法的基礎。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
-  <h2>🗓️ Meeting Info</h2>
-  <div class="info">
-    <p><strong>Frequency:</strong> Weekly on Discord</p>
-    <p><strong>Duration:</strong> 60–90 minutes</p>
-    <p><strong>Format:</strong> Presentation (30 min) + Open Discussion (30 min)</p>
-  </div>
+  <!-- ================= 4. Load balancer ================= -->
+  <section class="sheet" id="s-lb">
+    <div class="sheetno">SHEET 05</div>
+    <h2 class="sec">負載平衡器：解決單點故障</h2>
+    <p class="sec-sub">使用者改連負載平衡器的公開 IP，Web 伺服器則只用內網 IP（Private IP）互相溝通，不再直接暴露給外部。</p>
+    <div class="flow">
+      <div class="box">使用者</div><span class="arrow">→</span>
+      <div class="box amber">負載平衡器<br><span style="font-size:10px;">公開 IP</span></div><span class="arrow">→</span>
+      <div class="stack">
+        <div class="box">Web 伺服器 1</div>
+        <div class="box">Web 伺服器 2</div>
+      </div>
+    </div>
+    <ul class="notes">
+      <li><b>其中一台掛掉：</b>流量全部轉給另一台，網站不會整個離線；同時補一台健康的伺服器進池子。</li>
+      <li><b>流量暴增：</b>只要往伺服器池加機器，負載平衡器會自動開始分流過去，不用改架構。</li>
+    </ul>
+  </section>
 
-  <footer>
-    Happy learning! 🚀 ·
-    <a href="https://github.com/erik1110/System-Design-Study-Group">GitHub Repo</a>
-  </footer>
+  <!-- ================= 5. Replication ================= -->
+  <section class="sheet" id="s-repl">
+    <div class="sheetno">SHEET 06</div>
+    <h2 class="sec">資料庫複製：Master / Slave</h2>
+    <p class="sec-sub">Web 層解決了單點問題，資料庫也要如法炮製 — 一個主（Master）負責寫入，多個從（Slave）負責讀取；讀多寫少，所以從資料庫通常比主資料庫多。</p>
+    <div class="flow">
+      <div class="box amber">主資料庫<br><span style="font-size:10px;">寫 / 改 / 刪</span></div>
+      <span class="arrow">⇢ 非同步複製 ⇢</span>
+      <div class="stack">
+        <div class="box">從資料庫 1<br><span style="font-size:10px;">只讀</span></div>
+        <div class="box">從資料庫 2<br><span style="font-size:10px;">只讀</span></div>
+      </div>
+    </div>
+    <p><b>好處：</b></p>
+    <ul class="notes">
+      <li><b>效能：</b>寫入集中在主節點，讀取分散到多個從節點，可平行處理更多查詢。</li>
+      <li><b>可靠性：</b>就算某座機房被天災摧毀，資料仍在其他地點保存著。</li>
+      <li><b>高可用：</b>某台資料庫離線，還能從其他節點存取資料。</li>
+    </ul>
+    <p><b>容錯情境：</b>從資料庫掛了 → 讀取暫時導回主資料庫，同時換一台新的從資料庫頂上。主資料庫掛了 → 提升一台從資料庫成為新主，這個過程在正式環境比較複雜，因為從節點資料可能還沒跟上最新進度。</p>
+  </section>
+
+  <!-- ================= 6. Cache ================= -->
+  <section class="sheet" id="s-cache">
+    <div class="sheetno">SHEET 07</div>
+    <h2 class="sec">快取層：別讓資料庫每次都被打</h2>
+    <p class="sec-sub">快取是暫存區，把「昂貴查詢的結果」或「常被存取的資料」放進記憶體，讓後續請求更快拿到答案。</p>
+    <div class="flow">
+      <div class="box">Web 伺服器</div><span class="arrow">→</span>
+      <div class="box amber">先查快取</div><span class="arrow">命中？</span>
+      <div class="stack">
+        <div class="box" style="font-size:11px;">✓ 直接回傳</div>
+        <div class="box" style="font-size:11px;">✗ 查資料庫→寫回快取→回傳</div>
+      </div>
+    </div>
+    <p class="sec-sub" style="margin-top:6px;">這種「先查快取，沒有才查資料庫」的策略叫做 <span class="tag">read-through cache</span>。</p>
+    <p><b>使用快取前要想清楚的五件事：</b></p>
+    <ul class="notes">
+      <li><b>什麼時候該用：</b>資料「常讀、少改」最適合；快取資料活在揮發性記憶體，重要資料還是要有持久化儲存，因為快取伺服器重開機資料就沒了。</li>
+      <li><b>過期策略：</b>太短 → 一直重新從資料庫載入；太長 → 資料容易過時。要抓一個平衡點。</li>
+      <li><b>一致性：</b>資料庫和快取的寫入不是同一個交易，容易不同步；跨區域規模化時更難維持一致，可參考 Facebook《Scaling Memcache》論文。</li>
+      <li><b>容錯：</b>單一快取伺服器是單點故障（SPOF）；建議跨機房部署多台快取，並預留額外記憶體緩衝。</li>
+      <li><b>淘汰策略：</b>快取滿了要踢掉誰？最常見是 <span class="tag">LRU</span>（最近最少使用），也可以用 <span class="tag">LFU</span>（最少使用次數）或 <span class="tag">FIFO</span>。</li>
+    </ul>
+  </section>
+
+  <!-- ================= 7. CDN ================= -->
+  <section class="sheet" id="s-cdn">
+    <div class="sheetno">SHEET 08</div>
+    <h2 class="sec">CDN：把靜態資源搬到離使用者最近的地方</h2>
+    <p class="sec-sub">CDN 是分佈在世界各地的伺服器網路，專門快取圖片、影片、CSS、JS 這類靜態內容。離 CDN 節點越遠，網頁載入越慢。</p>
+    <div class="flow">
+      <div class="box">使用者 A 要 image.png</div><span class="arrow">→</span>
+      <div class="box amber">CDN 節點</div>
+    </div>
+    <ul class="notes">
+      <li>CDN 節點沒有快取 → 回源站（Web 伺服器或 S3）拿檔案。</li>
+      <li>來源站回傳圖片，並附上 <span class="tag">TTL</span>（Time-to-Live）標示快取多久。</li>
+      <li>CDN 存好快取後回傳給使用者 A；TTL 過期前都用快取版本。</li>
+      <li>使用者 B 要同一張圖 → TTL 沒過期的話，直接從 CDN 快取拿，不用再問源站。</li>
+    </ul>
+    <p><b>使用 CDN 要注意：</b></p>
+    <ul class="notes">
+      <li><b>成本：</b>CDN 按流量計費，不常被存取的資源放著沒什麼好處，可以考慮移出。</li>
+      <li><b>過期時間：</b>太長內容不新鮮，太短造成頻繁回源。</li>
+      <li><b>容錯：</b>CDN 短暫故障時，前端要能偵測並改向源站要資源。</li>
+      <li><b>提前失效：</b>可以呼叫 CDN 廠商 API 主動清除，或用「物件版本化」（如 <span class="tag">image.png?v=2</span>）逼出新版本。</li>
+    </ul>
+  </section>
+
+  <!-- ================= 8. stateless ================= -->
+  <section class="sheet" id="s-stateless">
+    <div class="sheetno">SHEET 09</div>
+    <h2 class="sec">無狀態網頁層</h2>
+    <p class="sec-sub">要水平擴展 Web 層，得先把「狀態」（例如 session）搬出伺服器本身。</p>
+    <div class="grid2">
+      <div>
+        <p><b class="mono" style="color:#f2a93b;">Stateful（有狀態）</b></p>
+        <p style="font-size:13.5px;">使用者 A 的 session 存在伺服器 1 上 → A 的請求一定要被路由回伺服器 1，否則驗證失敗。通常靠負載平衡器的「黏性連線（sticky session）」硬撐。</p>
+        <ul class="notes">
+          <li class="warn">加減伺服器很麻煩</li>
+          <li class="warn">單台故障處理困難</li>
+        </ul>
+      </div>
+      <div>
+        <p><b class="mono" style="color:#5fd4e0;">Stateless（無狀態）</b></p>
+        <p style="font-size:13.5px;">Session 資料搬到共享儲存（關聯式資料庫、Memcached/Redis 或 NoSQL）。任何一台 Web 伺服器都能處理任何使用者的請求。</p>
+        <ul class="notes">
+          <li>系統更簡單、更穩固</li>
+          <li>可以依流量自動增減伺服器（Auto Scaling）</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 9. multi datacenter ================= -->
+  <section class="sheet" id="s-dc">
+    <div class="sheetno">SHEET 10</div>
+    <h2 class="sec">多資料中心</h2>
+    <p class="sec-sub">使用者遍布全球後，一座機房不夠。用 <span class="tag">geoDNS</span> 把使用者導到最近的機房；某座機房整個掛掉時，全部流量改導去健康的那一座。</p>
+    <div class="flow">
+      <div class="box">使用者</div><span class="arrow">→</span>
+      <div class="box amber">geoDNS 路由</div>
+      <span class="arrow">↙</span>
+      <div class="box">機房 US-East<br><span style="font-size:10px;">x% 流量</span></div>
+      <span class="arrow">↘</span>
+      <div class="box">機房 US-West<br><span style="font-size:10px;">(100-x)% 流量</span></div>
+    </div>
+    <p><b>要解決的三個難題：</b></p>
+    <ul class="notes">
+      <li><b>流量導向：</b>靠 geoDNS 依使用者地理位置導到最近機房。</li>
+      <li><b>資料同步：</b>各地機房用不同的本地資料庫／快取，容易在 failover 時導到沒有資料的機房 — 常見做法是跨機房複製資料。</li>
+      <li><b>測試與部署：</b>要在不同地點測試，並用自動化部署工具讓各機房服務版本一致。</li>
+    </ul>
+  </section>
+
+  <!-- ================= 10. message queue ================= -->
+  <section class="sheet" id="s-mq">
+    <div class="sheetno">SHEET 11</div>
+    <h2 class="sec">訊息佇列：把元件解耦</h2>
+    <p class="sec-sub">訊息佇列是支援非同步通訊的緩衝區。生產者（Producer）發訊息進佇列，消費者（Consumer）獨立把它拿去處理 — 兩邊互不需要同時在線。</p>
+    <div class="flow">
+      <div class="box">Web 伺服器<br><span style="font-size:10px;">Producer</span></div>
+      <span class="arrow">→ 發佈任務 →</span>
+      <div class="box amber">訊息佇列</div>
+      <span class="arrow">→ 領取任務 →</span>
+      <div class="box">處理 Worker<br><span style="font-size:10px;">Consumer</span></div>
+    </div>
+    <p style="font-size:13.5px;">舉例：使用者上傳照片要裁切、加銳利、模糊化，這些耗時工作交給 Worker 非同步處理。佇列變長就多加幾台 Worker，佇列空了就縮減，生產者與消費者可以各自獨立擴展。</p>
+  </section>
+
+  <!-- ================= 11. logging / metrics / automation ================= -->
+  <section class="sheet" id="s-log">
+    <div class="sheetno">SHEET 12</div>
+    <h2 class="sec">日誌、監控與自動化</h2>
+    <p class="sec-sub">系統還小的時候可有可無，變成大型業務之後就是必需品。</p>
+    <div class="grid2">
+      <div>
+        <p><b class="mono" style="color:#5fd4e0;">日誌 Logging</b><br><span style="font-size:13.5px; color:#8fb2cc;">監控錯誤日誌，可用單機層級或集中式服務彙整，方便搜尋查看。</span></p>
+        <p><b class="mono" style="color:#5fd4e0;">自動化 Automation</b><br><span style="font-size:13.5px; color:#8fb2cc;">系統變大變複雜就需要 CI/CD：每次提交都自動驗證，提早抓出問題；建置／測試／部署流程自動化能大幅提升生產力。</span></p>
+      </div>
+      <div>
+        <p><b class="mono" style="color:#5fd4e0;">指標 Metrics</b></p>
+        <ul class="notes">
+          <li><b>主機層級：</b>CPU、記憶體、磁碟 I/O</li>
+          <li><b>彙整層級：</b>整個資料庫層、快取層的表現</li>
+          <li><b>商業指標：</b>日活躍使用者、留存率、營收</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 12. sharding ================= -->
+  <section class="sheet" id="s-shard">
+    <div class="sheetno">SHEET 13</div>
+    <h2 class="sec">資料庫擴展：分片（Sharding）</h2>
+    <p class="sec-sub">垂直擴展資料庫終究撞到硬體上限、成本又高、單點故障風險也大。水平擴展資料庫 = 分片：把大型資料庫切成多個 Shard，各自結構相同，資料各自獨立。</p>
+    <div class="flow">
+      <div class="box">user_id % 4</div><span class="arrow">→</span>
+      <div class="stack" style="flex-direction:row;">
+        <div class="box">Shard 0</div>
+        <div class="box">Shard 1</div>
+        <div class="box">Shard 2</div>
+        <div class="box">Shard 3</div>
+      </div>
+    </div>
+    <p><b>挑選 Sharding Key（分片鍵）最重要的原則：</b>能讓資料平均分佈。</p>
+    <p><b>分片帶來的新麻煩：</b></p>
+    <ul class="notes">
+      <li><b>重新分片：</b>單一 shard 資料塞爆，或資料分佈不均導致某些 shard 提早爆滿，就得調整分片函式並搬移資料 — 第五章的一致性雜湊（Consistent Hashing）就是為了解決這個問題。</li>
+      <li><b class="warn">名人問題（Hotspot Key）：</b>假設 Katy Perry、Justin Bieber、Lady Gaga 的資料剛好都落在同一個 shard，這個 shard 的讀取量會被灌爆 — 可能得為每位「名人」單獨配一個 shard，甚至再進一步切分。</li>
+      <li><b>JOIN 與反正規化：</b>資料庫一旦分片，跨 shard 做 JOIN 很困難，常見解法是把資料反正規化（denormalize），讓查詢能在單一表內完成。</li>
+    </ul>
+  </section>
+
+  <!-- ================= Real world cases ================= -->
+  <section class="sheet" id="s-cases">
+    <div class="sheetno">SHEET 14 — 課外補充</div>
+    <h2 class="sec">業界真實案例：把書裡的觀念對照到真實世界</h2>
+    <p class="sec-sub">以下三個例子不是書裡的內容,是我額外找的補充教材,分別對應「CDN」「資料庫複製」「資料庫分片」三個小節,點開看細節就好,不看也不影響你理解本章。</p>
+
+    <details class="case">
+      <summary>
+        <div class="case-head">
+          <span class="case-mark">案例 01</span>
+          <div>
+            <div class="case-name">Netflix Open Connect — 自己蓋一座 CDN</div>
+            <div class="case-hint">對照 SHEET 08．CDN</div>
+          </div>
+        </div>
+        <span class="case-plus">+</span>
+      </summary>
+      <div class="case-body">
+        <p><span class="case-tag">主動預先分發</span>Netflix 沒有租第三方 CDN,而是把自製的專用機器 OCA（Open Connect Appliance）直接放進全球超過六千個 ISP 的機房裡。跟書中「使用者要圖片、CDN 沒快取才回源站」的被動流程不同,Netflix 是反過來:在離峰時段,依照預測模型先把「這個地區可能會紅的內容」預先搬進 OCA,使用者按下播放時幾乎不用等現抓。</p>
+        <p><span class="case-tag">控制面／資料面分離</span>OCA 平常會回報健康狀態、可連通性給中央的快取控制服務;但如果 OCA 一時連不上中央系統,它仍然可以憑「上一次拿到的設定」繼續把已經快取好的內容送給正在收看的使用者,只是內容目錄暫時不會更新。這是一種很實用的容錯設計:平常依賴中央協調,斷線時退化成「自己顧自己」也還能動。</p>
+        <p><span class="case-tag">流量怎麼導</span>哪些使用者流量會被導去哪一台 OCA,是 ISP 透過 BGP 網路協定明確宣告出來的,不是 OCA 自己搶流量。這讓 ISP 對自己的網路仍保有完全的控制權。</p>
+        <p style="color:#8fb2cc; font-size:13px;">對理解本章的幫助:CDN 不是只有「快取一份靜態檔案」這麼簡單,規模夠大時,「预测+预先分发」加上「控制面／資料面分離」是更進階的容錯思路。</p>
+      </div>
+    </details>
+
+    <details class="case">
+      <summary>
+        <div class="case-head">
+          <span class="case-mark">案例 02</span>
+          <div>
+            <div class="case-name">GitHub 2018 資料庫故障轉移事故</div>
+            <div class="case-hint">對照 SHEET 06．資料庫複製</div>
+          </div>
+        </div>
+        <span class="case-plus">+</span>
+      </summary>
+      <div class="case-body">
+        <p><span class="case-tag">起因很小</span>2018 年 10 月 21 日,GitHub 東岸機房在例行維護中,跟網路樞紐的連線斷了短短 43 秒 — 這就是書裡說的「網路分區（network partition）」。</p>
+        <p><span class="case-tag">自動容錯轉移的兩難</span>GitHub 用一套叫 Orchestrator 的工具自動管理 MySQL 主從架構與容錯移轉。它偵測到東岸主資料庫失聯,依照多數決機制,把西岸的一台從資料庫拔升成新的主資料庫。問題是:斷線的這 43 秒裡,東岸主資料庫其實還在繼續接受寫入,但這些寫入根本來不及同步過去給西岸。等連線恢復、應用程式開始改寫去新的西岸主資料庫時,兩邊的資料已經「分岔」了,沒辦法乾淨地合併回去。</p>
+        <p><span class="case-tag">最後的取捨</span>GitHub 面臨書裡提過的經典抉擇：要一致性,還是要可用性？他們選擇優先保住資料不遺失、不衝突 — 讓網站顯示過時資訊、變成唯讀模式,足足花了 24 小時手動核對、補齊差異資料,而不是冒著使用者資料衝突或遺失的風險強行切回。</p>
+        <p style="color:#8fb2cc; font-size:13px;">對理解本章的幫助:書中提到「正式環境拔升新主更複雜,因為從資料庫可能還沒同步到最新進度」,這起事故就是最直接的真實案例 — 越自動化的容錯機制,越需要想清楚「資料還沒同步完」的那個空窗期怎麼辦。</p>
+      </div>
+    </details>
+
+    <details class="case">
+      <summary>
+        <div class="case-head">
+          <span class="case-mark">案例 03</span>
+          <div>
+            <div class="case-name">Instagram 的「邏輯分片」— 先切好,晚點再搬家</div>
+            <div class="case-hint">對照 SHEET 13．資料庫分片</div>
+          </div>
+        </div>
+        <span class="case-plus">+</span>
+      </summary>
+      <div class="case-body">
+        <p><span class="case-tag">不換 NoSQL,分片 PostgreSQL</span>Instagram 早期評估過幾種 NoSQL 方案,最後仍決定留在 PostgreSQL,靠「分片」硬撐過快速成長期。</p>
+        <p><span class="case-tag">邏輯分片 ≠ 實體分片</span>他們一開始就在程式碼邏輯上切出幾千個「邏輯分片」（用 Postgres 的 schema 功能實作,每個邏輯分片結構相同,各自放一份 users、photos 等資料表）,但這幾千個邏輯分片一開始其實全部擠在少數幾台實體機器上。等流量真的成長到撐不住,只需要把「一整批邏輯分片」搬去新機器,不必重新計算雜湊、不必重新切分資料 — 這正是書裡提到「resharding 很痛」的一種務實解法:先把切分的邊界定死,之後只搬「整批」,不用重新分配。</p>
+        <p><span class="case-tag">ID 本身就帶分片資訊</span>Instagram 設計了一組 64 位元 ID：41 位元時間戳記 + 13 位元邏輯分片編號 + 10 位元自增序號。這代表光看一個 ID,就能反推出「這筆資料在哪個分片」「大概什麼時候寫入的」,同時 ID 天生照時間排序 — 這個「用 ID 結構帶資訊」的手法,跟書中第七章要討論的 Twitter Snowflake ID 概念是同一個家族。</p>
+        <p style="color:#8fb2cc; font-size:13px;">對理解本章的幫助:分片的痛點不是「切」,是「以後要重新切」。Instagram 的做法示範了一種「先切細、晚點再搬」的思路,讓 resharding 從「重新計算」變成「搬家」。</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ================= Summary ================= -->
+  <section class="sheet" id="s-sum">
+    <div class="sheetno">SHEET 15 — 最終蓋章</div>
+    <h2 class="sec">百萬使用者以後：本章重點回顧</h2>
+    <p class="sec-sub">擴展系統是一個不斷迭代的過程；下面八點，是撐起百萬使用者規模的核心心法。</p>
+    <ul class="checklist">
+      <li>網頁層保持無狀態（Stateless）</li>
+      <li>每一層都要有備援（Redundancy）</li>
+      <li>能快取的資料盡量快取</li>
+      <li>支援多個資料中心</li>
+      <li>靜態資源放上 CDN</li>
+      <li>資料庫用分片（Sharding）擴展</li>
+      <li>把各層拆成獨立服務</li>
+      <li>監控系統並善用自動化工具</li>
+    </ul>
+  </section>
+
 </main>
+
+<footer>
+  筆記整理自 Alex Xu, <i>System Design Interview: An Insider's Guide</i> — 第一章「Scale From Zero To Millions Of Users」。<br>
+  圖表為重新繪製之互動版本，非原書掃描圖片。
+</footer>
+
+<script>
+(function(){
+  const stages = [
+    {
+      title: "單一伺服器",
+      tags: ["Web+DB+Cache 同機"],
+      bullets: [
+        "所有東西擠在一台伺服器：Web App、資料庫、快取。",
+        "使用者透過 DNS 拿到 IP，直接對這台機器發 HTTP 請求。",
+        "適合系統最初期、流量還很小的階段。"
+      ]
+    },
+    {
+      title: "分離資料層",
+      tags: ["Web 伺服器", "獨立資料庫"],
+      bullets: [
+        "把 Web／行動流量的伺服器，跟資料庫拆成兩台機器。",
+        "兩層可以各自獨立擴展，不互相拖累。",
+        "開始要決定：關聯式還是非關聯式資料庫？"
+      ]
+    },
+    {
+      title: "加入負載平衡器",
+      tags: ["Load Balancer", "多台 Web 伺服器"],
+      bullets: [
+        "使用者改連負載平衡器的公開 IP，Web 伺服器只保留內網 IP。",
+        "某台 Web 伺服器掛掉，流量自動轉給還活著的那台。",
+        "流量成長只要加機器進池子，不用改架構。"
+      ]
+    },
+    {
+      title: "資料庫複製",
+      tags: ["Master 只寫", "Slave 只讀"],
+      bullets: [
+        "主資料庫負責寫入／更新／刪除，多台從資料庫負責讀取。",
+        "讀多寫少是常態，所以從資料庫數量通常比主資料庫多。",
+        "任一節點掛掉都有備援：從掛了讀取暫時導回主，主掛了就升級一台從上位。"
+      ]
+    },
+    {
+      title: "快取層 + CDN",
+      tags: ["read-through cache", "靜態資源上 CDN"],
+      bullets: [
+        "Web 伺服器先查快取，沒有才查資料庫，減輕資料庫負擔。",
+        "圖片／CSS／JS 等靜態資源交給 CDN，就近提供給使用者，網站不用再自己扛。",
+        "要提前想好過期策略、淘汰策略（LRU/LFU/FIFO）與容錯備援。"
+      ]
+    },
+    {
+      title: "無狀態網頁層",
+      tags: ["Session 移出伺服器", "Auto Scaling"],
+      bullets: [
+        "把 session 資料搬到共享儲存（NoSQL / Redis），伺服器本身不再記住任何使用者狀態。",
+        "任何一台 Web 伺服器都能處理任何使用者的請求。",
+        "系統可以依流量自動增減伺服器，為後面的多資料中心鋪路。"
+      ]
+    }
+  ];
+
+  const slider = document.getElementById('stageSlider');
+  const els = document.querySelectorAll('.stage-el, .stage-arrow');
+  const stageTitle = document.getElementById('stageTitle');
+  const stageBullets = document.getElementById('stageBullets');
+  const stageTags = document.getElementById('stageTags');
+  const stageCounter = document.getElementById('stageCounter');
+  const stageNumBadge = document.getElementById('stageNumBadge');
+
+  function render(stage){
+    els.forEach(el => {
+      const min = parseInt(el.dataset.min || "1", 10);
+      const max = el.dataset.max ? parseInt(el.dataset.max, 10) : 999;
+      const visible = stage >= min && stage <= max;
+      el.style.opacity = visible ? "1" : "0";
+      el.style.pointerEvents = visible ? "auto" : "none";
+    });
+    const data = stages[stage-1];
+    stageTitle.textContent = data.title;
+    stageBullets.innerHTML = data.bullets.map(b => "<li>"+b+"</li>").join("");
+    stageTags.innerHTML = data.tags.map(t => '<span class="tag">'+t+'</span>').join("");
+    stageCounter.textContent = "STAGE " + stage + " / 6";
+    stageNumBadge.textContent = stage;
+  }
+
+  slider.addEventListener('input', e => render(parseInt(e.target.value,10)));
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    slider.value = Math.max(1, parseInt(slider.value,10) - 1);
+    render(parseInt(slider.value,10));
+  });
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    slider.value = Math.min(6, parseInt(slider.value,10) + 1);
+    render(parseInt(slider.value,10));
+  });
+
+  render(1);
+})();
+</script>
+
 </body>
 </html>
