@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>System Design Study Group</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --muted: #666;
+    --border: #e3e3e3;
+    --accent: #2d6cdf;
+    --card: #f7f8fa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16171a;
+      --fg: #e8e8e8;
+      --muted: #9a9a9a;
+      --border: #2e3035;
+      --accent: #6ea8ff;
+      --card: #1e2024;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC",
+                 "PingFang TC", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.65;
+    background: var(--bg);
+    color: var(--fg);
+  }
+  main { max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 2rem; margin: 0 0 .25rem; }
+  .tagline { color: var(--muted); margin: 0 0 2.5rem; }
+  h2 {
+    font-size: 1.15rem;
+    margin: 2.5rem 0 1rem;
+    padding-bottom: .5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+  th, td {
+    text-align: left;
+    padding: .7rem .8rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { font-weight: 600; color: var(--muted); white-space: nowrap; }
+  td:first-child { white-space: nowrap; color: var(--muted); }
+  a { color: var(--accent); }
+  ul { padding-left: 1.2rem; }
+  li { margin: .4rem 0; }
+  .info {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+  }
+  .info p { margin: .35rem 0; }
+  footer {
+    margin-top: 3rem;
+    color: var(--muted);
+    font-size: .875rem;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>📚 System Design Study Group</h1>
+  <p class="tagline">A weekly study group dedicated to exploring system design concepts, distributed systems, and software architecture best practices.</p>
+
+  <h2>📅 Schedule</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th><th>Topic</th><th>Presenter</th><th>Content</th><th>Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2026-05-08</td><td>Design A Chat System</td><td>Erik</td>
+          <td>Polling, Websocket and Data models</td><td></td>
+        </tr>
+        <tr>
+          <td>2026-05-08</td><td>Ch4: Rate Limiter</td><td>Susan</td>
+          <td>Algorithms for rate limiting, High-level architecture (Redis)</td><td></td>
+        </tr>
+        <tr>
+          <td>2026-05-15</td><td>Design A Unique ID Generator in Distributed Systems</td><td>Negi</td>
+          <td>How to generate unique IDs in distributed systems</td><td></td>
+        </tr>
+        <tr>
+          <td>2026-05-15</td><td>Ch4: Rate Limiter</td><td>Susan</td>
+          <td>Step 3: Design deep dive, Step 4: Deep dive</td><td></td>
+        </tr>
+        <tr>
+          <td>2026-05-23</td><td>Design A URL Shortener</td><td>Negi</td>
+          <td>301 redirect, 302 redirect, Back of the envelope estimation, API Endpoints</td><td></td>
+        </tr>
+        <tr>
+          <td>2026-05-29</td><td>Design A Chat System</td><td>Erik</td>
+          <td>Message flows, Online presence</td><td></td>
+        </tr>
+        <tr>
+          <td>2026-06-12</td><td>Design A Search Autocomplete System</td><td>Erik</td>
+          <td>Message flows, Online presence</td>
+          <td><a href="pdf/Ch13_Search_Autocomplete_System_EN.pdf">Ch13 PDF</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>📖 Reference Materials</h2>
+  <ul>
+    <li><a href="https://www.amazon.co.uk/System-Design-Interview-Insiders-Guide/dp/1736049119/">System Design Interview – An Insider's Guide: Volume 2</a></li>
+  </ul>
+
+  <h2>🗓️ Meeting Info</h2>
+  <div class="info">
+    <p><strong>Frequency:</strong> Weekly on Discord</p>
+    <p><strong>Duration:</strong> 60–90 minutes</p>
+    <p><strong>Format:</strong> Presentation (30 min) + Open Discussion (30 min)</p>
+  </div>
+
+  <footer>
+    Happy learning! 🚀 ·
+    <a href="https://github.com/erik1110/System-Design-Study-Group">GitHub Repo</a>
+  </footer>
+</main>
+</body>
+</html>
