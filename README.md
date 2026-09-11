@@ -18,9 +18,9 @@ A weekly study group dedicated to exploring system design concepts, distributed 
 | 2026-07-03 | Ch1 Scale from zero to millions of users| Susan | Single server setup,...,cache| |
 | 2026-07-17 | Ch8: Design A URL Shortener | Negi | URL shortening, Hash + collision resolution, Data model, Hash function, Base 62 conversion |[CH8_URL_Shortener.pdf](https://github.com/erik1110/System-Design-Study-Group/blob/main/pdf/CH8_Scalable_URL_Shortener_Architecture.pdf)
 |2026-07-23| Design Google Drive - 1 | Erik | Step 1 - Understand the problem and establish design scope + Step 2 - Propose high-level design and get buy-in | [ch16_Design Google Drive](https://github.com/erik1110/System-Design-Study-Group/blob/main/pdf/ch16_Design%20Google%20Drive.pdf)
-|2026-07-31 | Ch1 Scale from zero to millions of users| Susan | Review|https://github.com/ZihcingLan/system-design-interview-notes/blob/main/chapter1_blueprint_notes.html |
+|2026-07-31 | Ch1 Scale from zero to millions of users| Susan | Review| https://zihcinglan.github.io/system-design-interview-notes/chapter1_blueprint_notes.html |
 |2026-08-21| Design Google Drive - 2 | Erik | Step 3 - Design deep dive | [ch16_Design Google Drive](https://github.com/erik1110/System-Design-Study-Group/blob/main/pdf/ch16_Design%20Google%20Drive.pdf) |
-|2026-08-21 | Ch2 BACK-OF-THE-ENVELOPE ESTIMATION | Susan | How to estimate system capacity and performance requirement  |https://github.com/ZihcingLan/system-design-interview-notes/blob/main/chapter2_estimation_notes.html |
+|2026-08-21 | Ch2 BACK-OF-THE-ENVELOPE ESTIMATION | Susan | How to estimate system capacity and performance requirement  |[https://github.com/ZihcingLan/system-design-interview-notes/blob/main/chapter2_estimation_notes.html](https://zihcinglan.github.io/system-design-interview-notes/chapter2_estimation_notes.html) |
 |2026-08-28 | Ch9: Web Crawler | Negi | Web crawler overview, crawling workflow, URL frontier, politeness policies, robots.txt, duplicate detection| |
 ---
 
