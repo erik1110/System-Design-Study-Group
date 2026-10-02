@@ -24,6 +24,8 @@ A weekly study group dedicated to exploring system design concepts, distributed 
 |2026-08-28/2026-09-10 | Ch9: Web Crawler | Negi | Web crawler overview, crawling workflow, URL frontier, politeness policies, robots.txt, duplicate detection|[CH9_WebCrawler](https://github.com/erik1110/System-Design-Study-Group/blob/main/pdf/CH9_WebCrawler.pdf) |
 |2026-09-17 | Ch3 | Susan |  A FRAMEWORK FOR SYSTEM DESIGN INTERVIEWS  |https://zihcinglan.github.io/system-design-interview-notes/chapter3_framework_notes.html |
 |2026-09-24 | Ch4 | Susan |  DESIGN A RATE LIMITER  |https://zihcinglan.github.io/system-design-interview-notes/chapter4_ratelimiter_notes.html|
+|2026-10-02 | Ch5 | Susan |  DESIGN CONSISTENT HASHING  |https://zihcinglan.github.io/system-design-interview-notes/chapter5_consistenthashing_notes.html|
+|2026-10-09 | Ch6 | Susan |  DESIGN A KEY-VALUE STORE  |-|
 
 ---
 
